@@ -1,16 +1,17 @@
+#!/usr/bin/env python
+
+import os
+
+
 class Item:
     name: str
     amount: int
-    sell_price: float
-    buy_price: float
-    revenue: float
+    price: float
 
-    def __init__(self, name, amount=0, sell_price=None, buy_price=None):
+    def __init__(self, name, amount=0, price=0.0):
         self.name = name
         self.amount = amount
-        self.buy_price = buy_price
-        self.sell_price = sell_price
-        self.revenue = 0
+        self.price = price
 
     def check_stock(self, treshold):
         if self.amount <= treshold:
@@ -18,36 +19,86 @@ class Item:
         else:
             return True
 
-    def buy_item(self, amount, buy_price):
-        self.buy_price = ((self.buy_price * self.amount) + (buy_price * amount)) / (
-            amount + self.amount
-        )
-        self.revenue -= amount * buy_price
+    def buy_item(self, amount):
         self.amount += amount
 
     def sell_item(self, amount):
         self.amount -= amount
-        self.revenue += amount * self.sell_price
-        return amount * self.sell_price
 
-    def update_price(self, sell_price):
-        self.sell_price = sell_price
+    def update_price(self, price):
+        self.price = price
 
-    def get_revenue(self):
-        return self.revenue
+    def __repr__(self):
+        return "<Item %s>" % self.name
 
 
-carrot = Item("carrot", 50, 40, 30)
-potato = Item("potato", 100, 30, 15)
+def menu_create_item():
+    item_name = input("Enter item name: ")
+    item_amount = input("Enter amount: ")
+    item_price = input("Enter price: ")
+    print("\n%s added." % item_name)
+    return Item(item_name, item_amount, item_price)
 
-print("Carrot amount %i, avg. buy price: %f" % (carrot.amount, carrot.buy_price))
-print("Potato amount %i, avg. buy price: %f" % (potato.amount, potato.buy_price))
 
-if not carrot.check_stock(40):
-    carrot.buy_item(100, 50)
+def menu_print_title():
+    os.system("clear")
+    print("Stoker")
+    print("A little stock manager.")
+    print()
+    print()
+    print()
+    print()
 
-if not potato.check_stock(200):
-    potato.buy_item(100, 13)
 
-print("Carrot amount %i, avg. buy price: %f" % (carrot.amount, carrot.buy_price))
-print("Potato amount %i, avg. buy price: %f" % (potato.amount, potato.buy_price))
+def menu_title_screen():
+    menu_print_title()
+    print("Choose option:")
+    print("    1) Add item")
+    print("    2) Check stock for item")
+    print("    3) Check sales info")
+    print()
+    print()
+    print()
+    print()
+    print()
+    print("For exit press enter 0")
+    print()
+
+
+if __name__ == "__main__":
+
+    stock: list[Item] = []
+
+    while True:
+
+        menu_title_screen()
+        try:
+            option = int(input("Op: "))
+            if option not in [1, 2, 3, 0]:
+                raise ValueError
+        except TypeError:
+            menu_print_title()
+            print("Option must be number")
+            print("Press Enter to continue")
+            _ = input()
+            continue
+        except ValueError:
+            menu_print_title()
+            print("Unknown operation")
+            print("Press Enter to continue")
+            _ = input()
+            continue
+
+        if option == 0:
+            exit(0)
+        elif option == 1:
+            menu_print_title()
+            _ = input("Press Enter to continue")
+        elif option == 2:
+            menu_print_title()
+            print("items stock")
+            _ = input("Press Enter to continue")
+        elif option == 3:
+            menu_print_title()
+            print("Sales info")
+            _ = input("Press Enter to continue")
